@@ -46,10 +46,10 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        // Count coyote time
+        // Check if grounded and count coyote time
         if (Physics2D.BoxCast(
                 transform.position,
-                Vector2.one * transform.localScale.x,
+                Vector2.one * (transform.localScale.x - 0.05f),
                 0,
                 Vector2.down,
                 ((transform.localScale.y-transform.localScale.x)/2) + 0.1f
