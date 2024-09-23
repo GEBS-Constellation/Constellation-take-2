@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -14,12 +15,18 @@ public class PlayerController : MonoBehaviour
     [Tooltip("The time after falling over an edge where jumping is still possible")]
     public float coyote_time;
 
+    [Header("Interaction")]
+    [Tooltip("Maximum distance the player can interact with an object from")]
+    public float max_distance;
+
     private Rigidbody2D rb;
     private float coyote_timer;
     private bool jump_exec;
+    private Interactable[] interactables;
 
     void Start() {
         rb = GetComponent<Rigidbody2D>();
+        interactables = FindObjectsOfType<Interactable>();
     }
 
     void FixedUpdate() {
@@ -60,6 +67,25 @@ public class PlayerController : MonoBehaviour
             coyote_timer = Mathf.MoveTowards(coyote_timer, 0, Time.fixedDeltaTime);
             if (coyote_timer == 0) {
                 jump_exec = false;
+            }
+        }
+    }
+
+    void Update() {
+        // Check if interactables are within reach
+        Interactable nearest = interactables
+            .Where(i=>Vector2.Distance(transform.position, i.transform.position) < max_distance)
+            .OrderBy(i=>Vector2.Distance(transform.position, i.transform.position))
+            .FirstOrDefault();
+        
+        foreach (Interactable i in interactables.Where(i => i != nearest)) {
+            i.selected = false;
+        }
+
+        if (nearest != null) {
+            nearest.selected = true;
+            if (Input.GetButtonDown("Interact")) {
+                nearest.Interact();
             }
         }
     }
