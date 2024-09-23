@@ -29,7 +29,7 @@ public class PuzzleManager : MonoBehaviour
     void Start() {
         // decode solution
         if (mode == Mode.combination) {
-            decodedSolution = new List<int[]> {solution.Split(',').OrderBy(x=>x).Select(i=>interactables[int.Parse(i)].active?1:0).ToArray()};
+            decodedSolution = new List<int[]> {interactables.Select(i=>solution.Split(',').Any(s=>int.Parse(s)==Array.IndexOf(interactables, i))?1:0).ToArray()};
         } else if (mode == Mode.sequence) {
             decodedSolution = new List<int[]>();
             
